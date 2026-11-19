@@ -1,0 +1,74 @@
+{
+  "note": "SAMPLE placeholder data for design only. Not real prices or specs.",
+  "cars": [
+    {
+      "id": "sample-nexon",
+      "brand": "Tata",
+      "model": "Nexon",
+      "bodyType": "SUV",
+      "officialUrl": "https://cars.tatamotors.com",
+      "variants": [
+        {
+          "name": "Base",
+          "priceLakh": 8.0,
+          "fuel": "Petrol",
+          "transmission": "Manual",
+          "features": { "sunroof": "none", "screenInch": 7, "adas": false, "airbags": 6, "camera360": false, "ventilatedSeats": false, "alloyWheels": false }
+        },
+        {
+          "name": "Top",
+          "priceLakh": 15.0,
+          "fuel": "Diesel",
+          "transmission": "Automatic",
+          "features": { "sunroof": "panoramic", "screenInch": 12, "adas": true, "airbags": 6, "camera360": true, "ventilatedSeats": true, "alloyWheels": true }
+        }
+      ]
+    },
+    {
+      "id": "sample-creta",
+      "brand": "Hyundai",
+      "model": "Creta",
+      "bodyType": "SUV",
+      "officialUrl": "https://www.hyundai.com/in/en",
+      "variants": [
+        {
+          "name": "Base",
+          "priceLakh": 11.0,
+          "fuel": "Petrol",
+          "transmission": "Manual",
+          "features": { "sunroof": "none", "screenInch": 8, "adas": false, "airbags": 6, "camera360": false, "ventilatedSeats": false, "alloyWheels": false }
+        },
+        {
+          "name": "Top",
+          "priceLakh": 20.0,
+          "fuel": "Petrol",
+          "transmission": "Automatic",
+          "features": { "sunroof": "panoramic", "screenInch": 10, "adas": true, "airbags": 6, "camera360": true, "ventilatedSeats": true, "alloyWheels": true }
+        }
+      ]
+    },
+    {
+      "id": "sample-3xo",
+      "brand": "Mahindra",
+      "model": "XUV 3XO",
+      "bodyType": "SUV",
+      "officialUrl": "https://auto.mahindra.com",
+      "variants": [
+        {
+          "name": "Base",
+          "priceLakh": 8.0,
+          "fuel": "Petrol",
+          "transmission": "Manual",
+          "features": { "sunroof": "none", "screenInch": 7, "adas": false, "airbags": 6, "camera360": false, "ventilatedSeats": false, "alloyWheels": false }
+        },
+        {
+          "name": "Top",
+          "priceLakh": 15.0,
+          "fuel": "Diesel",
+          "transmission": "Automatic",
+          "features": { "sunroof": "panoramic", "screenInch": 10, "adas": true, "airbags": 6, "camera360": true, "ventilatedSeats": false, "alloyWheels": true }
+        }
+      ]
+    }
+  ]
+}
