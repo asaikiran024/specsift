@@ -1,29 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SpecSift - Find cars by features</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 30% 20%, #1b2a4a, #0a0d14 70%);
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    h1 { font-size: 3rem; margin: 0 0 12px; letter-spacing: 1px; }
-    p { color: #9fb0d0; font-size: 1.2rem; margin: 0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpecSift - Find cars by the features you want</title>
+<style>
+  :root { --bg:#0a0d14; --panel:#121826; --line:#22304d; --text:#eef2fb; --muted:#8fa0c4; --accent:#3ee0c0; --accent2:#5b8cff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:Arial,Helvetica,sans-serif; }
+  .hero { padding:60px 20px 40px; text-align:center; background:radial-gradient(circle at 30% 0%, #1b2a4a, transparent 60%), radial-gradient(circle at 80% 20%, #14403d, transparent 55%); }
+  .hero h1 { font-size:clamp(2rem,5vw,3.6rem); margin:0 0 10px; letter-spacing:1px; }
+  .hero h1 span { background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; color:transparent; }
+  .hero p { color:var(--muted); font-size:1.1rem; margin:0; }
+  .wrap { max-width:1200px; margin:0 auto; padding:20px; display:grid; grid-template-columns:300px 1fr; gap:24px; }
+  @media (max-width:850px){ .wrap { grid-template-columns:1fr; } }
+  .filters { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:20px; height:fit-content; position:sticky; top:16px; }
+  .filters h3 { margin:0 0 14px; font-size:1rem; color:var(--accent); letter-spacing:1px; text-transform:uppercase; }
+  .group { margin-bottom:18px; }
+  .group label.t { display:block; font-size:.85rem; color:var(--muted); margin-bottom:8px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:7px 13px; border-radius:20px; border:1px solid var(--line); background:transparent; color:var(--text); cursor:pointer; font-size:.85rem; transition:all .2s; }
+  .chip:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .chip.on { background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#06101c; border-color:transparent; font-weight:bold; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .count { margin:0 0 16px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:20px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden; opacity:0; transform:translateY(20px); animation:up .5s forwards; transition:transform .25s, box-shadow .25s, border-color .25s; }
+  .card:hover { transform:translateY(-6px); border-color:var(--accent); box-shadow:0 12px 35px rgba(62,224,192,.18); }
+  @keyframes up { to { opacity:1; transform:translateY(0); } }
+  .pic { height:130px; display:flex; align-items:center; justify-content:center; font-size:3.4rem; font-weight:bold; background:linear-gradient(135deg,#1b2a4a,#14403d); color:rgba(255,255,255,.25); }
+  .body { padding:16px; }
+  .brand { color:var(--muted); font-size:.8rem; text-transform:uppercase; letter-spacing:1px; }
+  .name { font-size:1.3rem; margin:2px 0 6px; }
+  .price { color:var(--accent); font-weight:bold; margin-bottom:6px; }
+  .small { color:var(--muted); font-size:.8rem; margin-bottom:10px; }
+  .pills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+  .pill { font-size:.72rem; padding:4px 9px; border-radius:12px; background:#1a2540; color:#cfe0ff; }
+  .btn { display:block; text-align:center; padding:10px; border-radius:12px; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#06101c; font-weight:bold; text-decoration:none; transition:filter .2s; }
+  .btn:hover { filter:brightness(1.15); }
+  .ad { border:1px dashed var(--accent2); background:rgba(91,140,255,.07); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; min-height:300px; }
+  .ad b { color:var(--accent2); }
+  .ad small { color:var(--muted); }
+  .empty { color:var(--muted); padding:40px; text-align:center; }
+  footer { text-align:center; color:var(--muted); font-size:.8rem; padding:30px; }
+</style>
 </head>
 <body>
-  <div>
-    <h1>SpecSift</h1>
-    <p>Find your next car by the features you actually want. Coming soon.</p>
-  </div>
+<div class="hero">
+  <h1>Spec<span>Sift</span></h1>
+  <p>Pick the features you want. We show the cars that have them.</p>
+</div>
+
+<div class="wrap">
+  <aside class="filters">
+    <h3>Filters</h3>
+    <div class="group">
+      <label class="t">Max price: <b id="priceLabel">30</b> lakh</label>
+      <input type="range" id="price" min="5" max="30" step="1" value="30">
+    </div>
+    <div class="group"><label class="t">Fuel</label><div class="chips" id="fuel"></div></div>
+    <div class="group"><label class="t">Transmission</label><div class="chips" id="trans"></div></div>
+    <div class="group"><label class="t">Sunroof</label><div class="chips" id="sunroof"></div></div>
+    <div class="group">
+      <label class="t">Min infotainment screen: <b id="screenLabel">any</b></label>
+      <input type="range" id="screen" min="0" max="12" step="1" value="0">
+    </div>
+    <div class="group"><label class="t">Must have</label><div class="chips" id="must"></div></div>
+  </aside>
+
+  <main>
+    <p class="count" id="count"></p>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+<footer>SpecSift shows specs for information only. Purchases happen on the official manufacturer websites.</footer>
+
+<script>
+const S = { price:30, fuel:new Set(), trans:new Set(), sunroof:'any', screen:0, must:new Set() };
+let CARS = [];
+
+function chips(id, options, onClick, isOn) {
+  const box = document.getElementById(id);
+  box.innerHTML = '';
+  options.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (isOn(o.v) ? ' on' : '');
+    b.textContent = o.l;
+    b.onclick = () => { onClick(o.v); draw(); };
+    box.appendChild(b);
+  });
+}
+function toggle(set, v) { set.has(v) ? set.delete(v) : set.add(v); }
+
+function drawFilters() {
+  chips('fuel', ['Petrol','Diesel','CNG','Electric'].map(x=>({v:x,l:x})), v=>toggle(S.fuel,v), v=>S.fuel.has(v));
+  chips('trans', ['Manual','Automatic'].map(x=>({v:x,l:x})), v=>toggle(S.trans,v), v=>S.trans.has(v));
+  chips('sunroof', [{v:'any',l:'Any'},{v:'yes',l:'Has sunroof'},{v:'panoramic',l:'Panoramic'}], v=>S.sunroof=v, v=>S.sunroof===v);
+  chips('must', [
+    {v:'adas',l:'ADAS'},{v:'camera360',l:'360 camera'},{v:'ventilatedSeats',l:'Ventilated seats'},{v:'alloyWheels',l:'Alloy wheels'}
+  ], v=>toggle(S.must,v), v=>S.must.has(v));
+}
+
+function matches(v) {
+  const f = v.features;
+  if (v.priceLakh > S.price) return false;
+  if (S.fuel.size && !S.fuel.has(v.fuel)) return false;
+  if (S.trans.size && !S.trans.has(v.transmission)) return false;
+  if (S.sunroof === 'yes' && f.sunroof === 'none') return false;
+  if (S.sunroof === 'panoramic' && f.sunroof !== 'panoramic') return false;
+  if (f.screenInch < S.screen) return false;
+  for (const m of S.must) if (!f[m]) return false;
+  return true;
+}
+
+function pillsFor(v) {
+  const f = v.features, p = [];
+  p.push(v.fuel, v.transmission);
+  if (f.sunroof !== 'none') p.push(f.sunroof + ' sunroof');
+  p.push(f.screenInch + '" screen');
+  if (f.adas) p.push('ADAS');
+  if (f.camera360) p.push('360 camera');
+  if (f.ventilatedSeats) p.push('Ventilated seats');
+  if (f.alloyWheels) p.push('Alloy wheels');
+  p.push(f.airbags + ' airbags');
+  return p.map(x => '<span class="pill">' + x + '</span>').join('');
+}
+
+function draw() {
+  drawFilters();
+  document.getElementById('priceLabel').textContent = S.price;
+  document.getElementById('screenLabel').textContent = S.screen ? S.screen + '"' : 'any';
+  const grid = document.getElementById('grid');
+  let html = '', shown = 0;
+  CARS.forEach(car => {
+    const ok = car.variants.filter(matches);
+    if (!ok.length) return;
+    ok.sort((a,b) => a.priceLakh - b.priceLakh);
+    const v = ok[0];
+    html += '<div class="card" style="animation-delay:' + (shown*0.07) + 's">' +
+      '<div class="pic">' + car.brand[0] + '</div><div class="body">' +
+      '<div class="brand">' + car.brand + '</div><div class="name">' + car.model + '</div>' +
+      '<div class="price">From ' + v.priceLakh + ' lakh</div>' +
+      '<div class="small">' + ok.length + ' of ' + car.variants.length + ' variants match. Showing: ' + v.name + '</div>' +
+      '<div class="pills">' + pillsFor(v) + '</div>' +
+      '<a class="btn" target="_blank" rel="noopener" href="' + car.officialUrl + '">View on official site</a></div></div>';
+    shown++;
+    if (shown === 2) {
+      html += '<div class="card ad" style="animation-delay:.2s"><small>Sponsored</small><b>Your ad here</b><small>Banner and native ad space</small></div>';
+    }
+  });
+  grid.innerHTML = html || '<div class="empty">No cars match all of these filters. Try removing one.</div>';
+  document.getElementById('count').textContent = shown + ' car' + (shown === 1 ? '' : 's') + ' found';
+}
+
+document.getElementById('price').oninput = e => { S.price = +e.target.value; draw(); };
+document.getElementById('screen').oninput = e => { S.screen = +e.target.value; draw(); };
+
+fetch('data/cars.json').then(r => r.json()).then(d => { CARS = d.cars; draw(); })
+  .catch(() => { document.getElementById('grid').innerHTML = '<div class="empty">Could not load car data.</div>'; });
+</script>
 </body>
 </html>
